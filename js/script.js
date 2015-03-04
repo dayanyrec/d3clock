@@ -2,7 +2,7 @@
 /* global d3 */
 
 window.onload = function () {
-	var fields, width, height, offSetX, offSetY, pi, scaleSecsMins, scaleHours, vis, clockGroup, render;
+	var fields, width, height, offSetX, offSetY, pi, scaleSecsMins, scaleHours, vis, clockGroup, render, rad;
 
 	fields = function () {
 		var data, currentTime, hour, minute, second;
@@ -23,10 +23,11 @@ window.onload = function () {
 		return data;
 	};
 
-	width = 400;
-	height = 200;
-	offSetX = 150;
-	offSetY = 100;
+	width = window.innerWidth;
+	height = window.innerHeight;
+	offSetX = width / 2;
+	offSetY = height / 2;
+	rad = offSetX < offSetY ? 0.7 * offSetX : 0.7 * offSetY;
 
 	pi = Math.PI;
 
@@ -42,7 +43,7 @@ window.onload = function () {
 		.attr("transform", "translate(" + offSetX + "," + offSetY + ")");
 
 	clockGroup.append("svg:circle")
-		.attr("r", 80).attr("fill", "none")
+		.attr("r", rad).attr("fill", "none")
 		.attr("class", "clock outercircle")
 		.attr("stroke", "black")
 		.attr("stroke-width", 2);
@@ -59,7 +60,7 @@ window.onload = function () {
 
 		secondArc = d3.svg.arc()
 			.innerRadius(0)
-			.outerRadius(70)
+			.outerRadius(rad - 10)
 			.startAngle(function (d) {
 				return scaleSecsMins(d.numeric);
 			})
@@ -69,7 +70,7 @@ window.onload = function () {
 
 		minuteArc = d3.svg.arc()
 			.innerRadius(0)
-			.outerRadius(70)
+			.outerRadius(rad - 10)
 			.startAngle(function (d) {
 				return scaleSecsMins(d.numeric);
 			})
@@ -79,7 +80,7 @@ window.onload = function () {
 
 		hourArc = d3.svg.arc()
 			.innerRadius(0)
-			.outerRadius(50)
+			.outerRadius(0.5 * rad)
 			.startAngle(function (d) {
 				return scaleHours(d.numeric % 12);
 			})
@@ -113,6 +114,8 @@ window.onload = function () {
 			})
 			.attr("fill", "none");
 	};
+
+	render(fields());
 
 	setInterval(function () {
 		var data;
